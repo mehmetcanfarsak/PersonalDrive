@@ -1,3 +1,4 @@
+![Logo](static/mstile-150.png)
 # Personal Drive 📁
 - - -
 **Simple and beautiful dashboard** to keep your files safe 🗄️
@@ -24,3 +25,5 @@
 ### 💻 Github Page: 
 
 > [https://github.com/mehmetcanfarsak/PersonalDrive](https://github.com/mehmetcanfarsak/PersonalDrive "https://github.com/mehmetcanfarsak/PersonalDrive")
+ 
+
