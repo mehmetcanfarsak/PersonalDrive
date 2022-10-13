@@ -49,6 +49,10 @@ app = FastAPI(description=description_of_fastapi, title="Personal Drive 📁",
               contact={"url": "https://github.com/mehmetcanfarsak", "Name": "Mehmet Can Farsak"})
 security = HTTPBasic()
 
+class AdminUser(BaseModel):
+    username: str
+    password: str
+
 
 def get_admin_user(credentials: HTTPBasicCredentials = Depends(security)):
     current_username_bytes = credentials.username.encode("utf8")
@@ -67,12 +71,9 @@ def get_admin_user(credentials: HTTPBasicCredentials = Depends(security)):
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Basic"},
         )
-    return credentials.username
+    return AdminUser(username=correct_username_bytes.decode(),password=correct_password_bytes.decode())
 
 
-class AdminUser(BaseModel):
-    username: str
-    password: str
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
