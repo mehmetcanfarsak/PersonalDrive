@@ -14,7 +14,7 @@
 
 🏄 Also **You can deploy this project for free on Deta.Sh** Just click the link below 🛠️
 
-[![Deploy](https://button.deta.dev/1/svg)](https://go.deta.dev/deploy?repo=https://github.com/mehmetcanfarsak/PrivateSimpleCaptchaApi)
+[![Deploy](https://button.deta.dev/1/svg)](https://go.deta.dev/deploy?repo=https://github.com/mehmetcanfarsak/PersonalDrive)
 
 ### Check Api Documantation below: ⬇️
 > **_Swagger UI:_**  [https://PersonalDrive.deta.dev/docs](https://PersonalDrive.deta.dev/docs "https://PersonalDrive.deta.dev/docs")
@@ -23,4 +23,4 @@
 
 ### 💻 Github Page: 
 
-> [https://github.com/mehmetcanfarsak/PrivateSimpleCaptchaApi](https://github.com/mehmetcanfarsak/PrivateSimpleCaptchaApi "https://github.com/mehmetcanfarsak/PrivateSimpleCaptchaApi")
+> [https://github.com/mehmetcanfarsak/PersonalDrive](https://github.com/mehmetcanfarsak/PersonalDrive "https://github.com/mehmetcanfarsak/PersonalDrive")
