@@ -28,10 +28,10 @@
  
 
 ## Pages
-###[Files in PersonalDrive](https://personaldrive.deta.dev/get-files)
+### [Files in PersonalDrive](https://personaldrive.deta.dev/get-files)
 ![public files](static/img_1.png)
 ![private files](static/img_2.png)
 
-###[Documentation](https://personaldrive.deta.dev/docs)
+### [Documentation](https://personaldrive.deta.dev/docs)
 ![introduction](static/img_3.png)
 ![details](static/img_4.png)
