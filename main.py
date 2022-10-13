@@ -39,7 +39,7 @@ description_of_fastapi = f"""
 
 
 # Deployment 💻 
-You can deploy your own instance of Wastebin using the button below. You will need a [Deta](https://www.deta.sh/) account.  
+You can deploy your own instance of PersonalDrive using the button below. You will need a [Deta](https://www.deta.sh/) account.  
 [![Click Here To Deploy Your Own Personal Drive 💻️](https://button.deta.dev/1/svg)](https://go.deta.dev/deploy?repo=https://github.com/mehmetcanfarsak/PersonalDrive)
 
 
