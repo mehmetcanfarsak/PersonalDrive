@@ -1,0 +1,19 @@
+{
+    "name": "Personal Drive",
+    "description": "Simple and beautiful dashboard to keep your files safe.",
+    "runtime": "python3.9",
+    "env": [
+                {
+            "key": "ADMIN_USERNAME",
+            "description": "Username is required for uploading and deleting files.",
+            "value": "7207a43b",
+            "required": true
+        },
+        {
+            "key": "ADMIN_PASSWORD",
+            "description": "Password is required for uploading and deleting files.",
+            "value": "7207a43b",
+            "required": true
+        }
+    ]
+}

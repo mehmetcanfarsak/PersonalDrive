@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Personal Drive Files</title>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script type="text/javascript" src="//code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" type="text/css"
+          href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="px-lg-5">
+
+        <!-- For demo purpose -->
+        <div class="row py-5">
+            <div class="col-lg-12 mx-auto">
+                <div class="text-white p-5 shadow-sm rounded banner">
+                    <h1 class="display-4">Your Public files</h1>
+                    <p class="lead">Personal Drive</p>
+                    {#          <p class="lead">Snippet by <a href="https://bootstrapious.com/snippets" class="text-reset">#}
+                    {#                        Bootstrapious</a>, Images by <a href="https://unsplash.com" class="text-reset">Unsplash</a>.#}
+                    {#          </p>#}
+                </div>
+            </div>
+        </div>
+        <!-- End -->
+
+
+        <div class="row">
+            {% for public_file in public_files %}
+                <!-- Gallery item -->
+                <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                    <div class="bg-white rounded shadow-sm">
+                        {% if( (public_file|string|lower).endswith(".png") or (public_file|string|lower).endswith(".jpg") or (public_file|string|lower).endswith(".jpeg") or (public_file|string|lower).endswith(".gif") ) %}
+                            <img src="public-file/{{ public_file|replace('public/','') }}" alt=""
+                                 class="img-fluid card-img-top">
+                        {% else %}
+                            <img src="static/img.png" alt="" class="img-fluid card-img-top">
+                        {% endif %}
+                        <div class="p-4">
+                            <h5><a href="public-file/{{ public_file|replace('public/','') }}"
+                                   class="text-dark">{{ public_file|replace('public/','') }}</a></h5>
+                            <div class="small text-muted mb-0">
+                                <b>Link:</b> <br>
+                                <input type="text"
+                                       class="form-control"
+                                       value="https://{{ request.headers.get('host') }}/public-file/{{ public_file|replace('public/','') }}">
+                                <br>
+                                <div class="badge badge-primary px-3 rounded-pill font-weight-normal"
+                                     onclick="navigator.clipboard.writeText('https://{{ request.headers.get('host') }}/public-file/{{ public_file|replace('public/','') }}');this.innerHTML='Copied ✅';">
+                                    Copy
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between rounded-pill bg-light px-3 py-2 mt-4">
+                                <p class="small mb-0"><i class="fa fa-file-o mr-2"></i><span
+                                        class="font-weight-bold">{{ (public_file|replace('public/','')).split(".")[-1] }}</span>
+                                </p>
+
+                                <form action="delete-public-file/{{ public_file|replace('public/','') }}" method="post">
+                                    <button class="badge badge-danger px-3 rounded-pill font-weight-normal">Delete
+                                    </button>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End -->
+            {% endfor %}
+        </div>
+        <!-- For demo purpose -->
+        <div class="row py-5">
+            <div class="col-lg-12 mx-auto">
+                <div class="text-white p-5 shadow-sm rounded banner">
+                    <h1 class="display-4">Your Private files</h1>
+                    <p class="lead">Personal Drive</p>
+                    {#          <p class="lead">Snippet by <a href="https://bootstrapious.com/snippets" class="text-reset">#}
+                    {#                        Bootstrapious</a>, Images by <a href="https://unsplash.com" class="text-reset">Unsplash</a>.#}
+                    {#          </p>#}
+                </div>
+            </div>
+        </div>
+        <!-- End -->
+        <div class="row">
+            {% for private_file in private_files %}
+                <!-- Gallery item -->
+                <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                    <div class="bg-white rounded shadow-sm">
+                        {% if( (private_file|string|lower).endswith(".png") or (private_file|string|lower).endswith(".jpg") or (private_file|string|lower).endswith(".jpeg") or (private_file|string|lower).endswith(".gif") ) %}
+                            <img src="private-file/{{ private_file|replace('private/','') }}" alt=""
+                                 class="img-fluid card-img-top">
+                        {% else %}
+                            <img src="static/img.png" alt="" class="img-fluid card-img-top">
+                        {% endif %}
+                        <div class="p-4">
+                            <h5><a href="private-file/{{ private_file|replace('private/','') }}"
+                                   class="text-dark">{{ private_file|replace('private/','') }}</a></h5>
+                            {#            <p class="small text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit</p>#}
+                            <div class="d-flex align-items-center justify-content-between rounded-pill bg-light px-3 py-2 mt-4">
+                                <p class="small mb-0"><i class="fa fa-file-o mr-2"></i><span
+                                        class="font-weight-bold">{{ (private_file|replace('private/','')).split(".")[-1] }}</span>
+                                </p>
+
+                                <form action="delete-private-file/{{ private_file|replace('private/','') }}"
+                                      method="post">
+                                    <button class="badge badge-danger px-3 rounded-pill font-weight-normal">Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End -->
+            {% endfor %}
+        </div>
+        {#    <div class="py-5 text-right"><a href="#" class="btn btn-dark px-5 py-3 text-uppercase">Show me more</a></div>#}
+    </div>
+</div>
+
+</body>
+</html>
