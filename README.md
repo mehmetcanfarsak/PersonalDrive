@@ -27,3 +27,11 @@
 > [https://github.com/mehmetcanfarsak/PersonalDrive](https://github.com/mehmetcanfarsak/PersonalDrive "https://github.com/mehmetcanfarsak/PersonalDrive")
  
 
+## Pages
+###[Files in PersonalDrive](https://personaldrive.deta.dev/get-files)
+![public files](static/img_1.png)
+![private files](static/img_2.png)
+
+###[Documentation](https://personaldrive.deta.dev/docs)
+![introduction](static/img_3.png)
+![details](static/img_4.png)
