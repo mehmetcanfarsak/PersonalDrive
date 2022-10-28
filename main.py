@@ -34,7 +34,9 @@ description_of_fastapi = f"""
 * **ADMIN_USERNAME** and **ADMIN_PASSWORD** (which is asked on deployment) is used as password and username 
 * Private Files can only be accessible with your username and password
 
-# [Show All Files 🗂️](get-files)  
+# [🗂️ Show All Files](get-files)  
+
+# [🗃 Upload Big Files As Chunks ](get-files)  
   
 
 
@@ -124,6 +126,46 @@ def get_files_result_in_html_format(request: Request, credentials: HTTPBasicCred
     return templates.TemplateResponse("get-files.html", {"request": request, "private_files": private_files,
                                                          "public_files": public_files})
 
+
+@app.get("/file-upload-with-chunks", tags=["Upload file as chunks"])
+def large_file_upload_as_chunks(request: Request, credentials: HTTPBasicCredentials = Depends(get_admin_user)):
+    show_demo_popup = False
+    if (credentials.username == "demo"):
+        show_demo_popup = True
+    return templates.TemplateResponse("large_file_upload_as_chunks.html",
+                                      {"request": request, "show_demo_popup": show_demo_popup})
+
+
+@app.post("/upload-public-file-part", tags=["Upload file as chunks"])
+def upload_publicly_accessible_file_part(name: str, content_type: str, part_number: int, total_part_number: int,
+                                         file: UploadFile, upload_id: str = "",
+                                         credentials: HTTPBasicCredentials = Depends(get_admin_user)):
+    if (credentials.username == "demo"):
+        return {"upload_id": upload_id}
+    name = "public/" + name
+    if (part_number == 1):
+        upload_id = personal_drive_files._start_upload(name)
+    personal_drive_files._upload_part(name, personal_drive_files._get_content_stream(file.file).read(1024 * 1024 * 10),
+                                      upload_id, part_number, content_type)
+    if (total_part_number == part_number):
+        personal_drive_files._finish_upload(name, upload_id)
+    return {"upload_id": upload_id}
+
+
+@app.post("/upload-private-file-part", tags=["Upload file as chunks"])
+def upload_privately_accessible_file_part(name: str, content_type: str, part_number: int, total_part_number: int,
+                                          file: UploadFile, upload_id: str = "",
+                                          credentials: HTTPBasicCredentials = Depends(get_admin_user)):
+    if (credentials.username == "demo"):
+        return {"upload_id": upload_id}
+    name = "private/" + name
+    if (part_number == 1):
+        upload_id = personal_drive_files._start_upload(name)
+    personal_drive_files._upload_part(name, personal_drive_files._get_content_stream(file.file).read(1024 * 1024 * 10),
+                                      upload_id, part_number, content_type)
+    if (total_part_number == part_number):
+        personal_drive_files._finish_upload(name, upload_id)
+    return {"upload_id": upload_id}
 
 @app.post("/get-files", response_class=JSONResponse, tags=["Get Files"])
 def get_files_result_in_json_format(credentials: HTTPBasicCredentials = Depends(get_admin_user)):
