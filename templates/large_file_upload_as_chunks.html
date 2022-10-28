@@ -1,0 +1,337 @@
+<html>
+<head>
+    <title>Upload Big File</title>
+
+
+</head>
+
+<body>
+<p id="title">
+    Upload a File
+</p>
+
+<br>
+<div id="action__upload">
+    <label for="video-file">
+    <img id="uploadFile__icon"  draggable="false" src="https://upload.a.video/upload.png">
+        </label>
+    <br/>
+    <label for="video-file" id="video-file-label">
+        Click here to upload a file
+    </label>
+    <input type="file" id="video-file" style='display:none'>
+
+</div>
+<div id="public_or_private_selection">
+    <br>
+    <label class="switch">
+        <input type="checkbox" id="should_upload_private" checked>
+        <span class="slider round"></span>
+    </label>
+    <label for="should_upload_private">Upload as Private File</label>
+</div>
+<br>
+<br>
+<div id="video-information" style="width: 50%"></div>
+<div id="chunk-information" style="width: 50%"></div>
+<div id="description">
+    Quickly upload *any* size file
+
+</div>
+{#<div id="footer">#}
+{#    This app was created with <a href="https://api.video">api.video</a>.<br/>#}
+{#    Get the <a href="https://github.com/dougsillars/blobUpload">sample code</a>, and read about <a#}
+{#        href="https://a.video/works/upload-a-video">how we built the demo.</a><br/>#}
+{#    More sample apps can be found at <a href="https://a.video">a.video</a>.#}
+{##}
+{#</div>#}
+{% if(show_demo_popup) %}
+<script>
+    alert("This is demo page. Files wont be uploaded. \n\nPlease deploy your instance. Check instructions on https://github.com/mehmetcanfarsak/PersonalDrive");
+</script>
+{% endif %}
+<script>
+    const input = document.querySelector('#video-file');
+    //changed to sandbox, becuase we cannot have nice things
+    var url = "";
+
+
+    var chunkCounter = 0;
+    //break into 1 MB chunks for demo purposes
+    const chunkSize = 5242882;
+    var upload_id = "";
+    var content_type = "";
+
+    input.addEventListener('change', () => {
+        if (document.getElementById('should_upload_private').checked) {
+            url = "/upload-private-file-part";
+        }else{
+            url = "/upload-public-file-part";
+        }
+
+        const file = input.files[0];
+        const filename = input.files[0].name;
+        var numberofChunks = Math.ceil(file.size / chunkSize);
+        content_type=file.type;
+
+        document.getElementById("video-information").innerHTML = "There will be " + numberofChunks + " chunks uploaded."
+        var start = 0;
+        chunkCounter = 0;
+        upload_id = "";
+
+        var chunkEnd = start + chunkSize;
+        //upload the first chunk to get the upload_id
+        createChunk(upload_id, start);
+
+
+        function createChunk(upload_id, start, end) {
+            chunkCounter++;
+            console.log("created chunk: ", chunkCounter);
+            chunkEnd = Math.min(start + chunkSize, file.size);
+            const chunk = file.slice(start, chunkEnd);
+            console.log("i created a chunk of video" + start + "-" + chunkEnd + "minus 1	");
+            const chunkForm = new FormData();
+            if (upload_id.length > 0) {
+                //we have a upload_id
+                chunkForm.append('upload_id', upload_id);
+                console.log("added upload_id");
+
+            }
+            //chunkForm.append('file', chunk);
+            chunkForm.append('file', chunk, filename);
+            console.log("added file");
+
+
+            //created the chunk, now upload it
+            uploadChunk(chunkForm, start, chunkEnd);
+        }
+
+        function uploadChunk(chunkForm, start, chunkEnd) {
+            var oReq = new XMLHttpRequest();
+            oReq.upload.addEventListener("progress", updateProgress);
+            oReq.open("POST", url + "?name=" + filename + "&content_type="+content_type+"&part_number=" + chunkCounter + "&total_part_number=" + numberofChunks + "&upload_id=" + upload_id, true);
+            var blobEnd = chunkEnd - 1;
+            var contentRange = "bytes " + start + "-" + blobEnd + "/" + file.size;
+            oReq.setRequestHeader("Content-Range", contentRange);
+            console.log("Content-Range", contentRange);
+
+            function updateProgress(oEvent) {
+                if (oEvent.lengthComputable) {
+                    var percentComplete = Math.round(oEvent.loaded / oEvent.total * 100);
+
+                    var totalPercentComplete = Math.round((chunkCounter - 1) / numberofChunks * 100 + percentComplete / numberofChunks);
+                    document.getElementById("chunk-information").innerHTML = "Chunk # " + chunkCounter + " is " + percentComplete + "% uploaded. Total uploaded: " + totalPercentComplete + "%";
+                    //	console.log (percentComplete);
+                    // ...
+                } else {
+                    console.log("not computable");
+                    // Unable to compute progress information since the total size is unknown
+                }
+            }
+
+            oReq.onload = function (oEvent) {
+                // Uploaded.
+                console.log("uploaded chunk");
+                console.log("oReq.response", oReq.response);
+                var resp = JSON.parse(oReq.response)
+                upload_id = resp.upload_id;
+
+                console.log("upload_id", upload_id);
+
+                //now we have the video ID - loop through and add the remaining chunks
+                //we start one chunk in, as we have uploaded the first one.
+                //next chunk starts at + chunkSize from start
+                start += chunkSize;
+                //if start is smaller than file size - we have more to still upload
+                if (start < file.size) {
+                    //create the new chunk
+                    createChunk(upload_id, start);
+                } else {
+                    //the file is fully uploaded.
+                        if (document.getElementById('should_upload_private').checked) {
+                            download_url = "/private-file/"+encodeURIComponent(filename);
+                        }else{
+                            download_url = "/public-file/"+encodeURIComponent(filename);
+                        }
+
+                    console.log("all uploaded! ", download_url);
+                    document.getElementById("video-information").innerHTML = "Uploaded! Click Here to see it <a href=\'" + download_url + "\' target=\'_blank\'>here</a>";
+                }
+
+            };
+            oReq.send(chunkForm);
+
+
+        }
+
+
+    });
+</script>
+<style>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
+<style>
+    body {
+        background-color: white;
+        color: white;
+
+        text-align: center;
+
+    }
+
+    #title {
+        width: 50%;
+
+        margin: auto;
+        text-align: center;
+        border-radius: 25px;
+        padding-top: 30px;
+        color: #fa5B30;
+        font-size: x-large;
+
+    }
+
+    #action__upload {
+        margin: auto;
+        text-align: center;
+        width: 50%;
+        height: 30%;
+        padding: 10px;
+
+
+    }
+
+    #uploadFile__icon {
+        margin: auto;
+        vertical-align: center;
+        padding: 20px;
+        text-align: center;
+
+    }
+
+    #video-file-label{
+        background-color: #fa5B30;
+        width: 50%;
+        height: 30%;
+        margin: auto;
+        display: inline-block;
+        text-align: center;
+        border-radius: 25px;
+        padding-top: 30px;
+        font-size: large;
+    }
+    #public_or_private_selection {
+        background-color: #fa5B30;
+        width: 20%;
+        height: 10%;
+        margin: auto;
+        display: inline-block;
+        text-align: center;
+        border-radius: 25px;
+        padding-top: 10px;
+        font-size: large;
+    }
+
+    #video-information {
+        width: 50%;
+        height: 10%;
+        margin: auto;
+        text-align: center;
+        border-radius: 25px;
+        padding-top: 30px;
+        color: #fa5B30;
+        font-size: x-large;
+
+    }
+
+    #chunk-information {
+        width: 50%;
+        height: 10%;
+        margin: auto;
+        text-align: center;
+        border-radius: 25px;
+        padding-top: 30px;
+        color: #fa5B30;
+        font-size: x-large;
+
+    }
+
+    #description {
+        width: 50%;
+        height: 10%;
+        margin: auto;
+        text-align: center;
+        border-radius: 25px;
+        padding-top: 30px;
+        color: #fa5B30;
+        font-size: x-large;
+
+    }
+
+    #footer {
+        font-size: large;
+        color: black;
+        padding: 10px;
+    }
+</style>
+</body>
+
+</html>
