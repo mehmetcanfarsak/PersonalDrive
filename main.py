@@ -97,7 +97,7 @@ def upload_publicly_accessible_file(request: Request, credentials: HTTPBasicCred
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE,
                             detail="You can not upload/delete files in demo. Please follow instructions to deploy your Personal Drive at github.com/mehmetcanfarsak/PersonalDrive", )
     personal_drive_files.put("public/" + file.filename, file.file)
-    return "https://" + request.headers.get("host") + "/" + file.filename
+    return "https://" + request.headers.get("host") + "/public-file/" + file.filename
 
 
 @app.post("/private-file",
@@ -109,7 +109,7 @@ def upload_privately_accessible_file(request: Request, credentials: HTTPBasicCre
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE,
                             detail="You can not upload/delete files in demo. Please follow instructions to deploy your Personal Drive at github.com/mehmetcanfarsak/PersonalDrive", )
     personal_drive_files.put("private/" + file.filename, file.file)
-    return "https://" + request.headers.get("host") + "/" + file.filename
+    return "https://" + request.headers.get("host") + "/private-file/" + file.filename
 
 
 @app.get("/get-files", response_class=HTMLResponse, tags=["Get Files"])
